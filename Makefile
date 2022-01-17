@@ -101,6 +101,9 @@ benchmark6_tanh: systems/reachnn_benchmark_6_tora_tanh.o $(OBJS)
 nn_attitude_control_sigmoid: systems/nn_attitude_control_sigmoid.o $(OBJS)
 	g++ -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
 
+acc: systems/nn_acc.o $(OBJS)
+	g++ -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
+
 # nn_attitude_control_tanh: systems/reachnn_nn_attitude_control_tanh.o $(OBJS)
 # 	g++ -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
 

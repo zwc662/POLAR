@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
 	// the order in use
 	// unsigned int order = 5;
-	Interval cutoff_threshold(-1e-5, 1e-5);
+	Interval cutoff_threshold(-1e-7, 1e-7);
 	unsigned int bernstein_order = stoi(argv[3]);
 	unsigned int partition_num = 4000;
 

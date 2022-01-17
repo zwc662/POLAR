@@ -8,7 +8,7 @@ using namespace flowstar;
 
 int main(int argc, char *argv[])
 {
-	intervalNumPrecision = 600;
+	intervalNumPrecision = 300;
 
 	// Declaration of the state variables.
 	unsigned int numVars = 6;
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	int x3_id = stateVars.declareVar("x3");
 	int x4_id = stateVars.declareVar("x4");
 	int u0_id = stateVars.declareVar("u0");
-
+	 
 	int domainDim = numVars + 1;
 
 	// Define the continuous dynamics.
@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 	Expression_AST<Real> deriv_x4("2 * u0 - 2* x4 - 0.0001 * x3^2");
 	Expression_AST<Real> deriv_u0("0");
 	 
-
 	vector<Expression_AST<Real>> ode_rhs(numVars);
 	ode_rhs[x0_id] = deriv_x0;
 	ode_rhs[x1_id] = deriv_x1;
@@ -39,6 +38,7 @@ int main(int argc, char *argv[])
 	ode_rhs[x3_id] = deriv_x3;
 	ode_rhs[x4_id] = deriv_x4;
 	ode_rhs[u0_id] = deriv_u0;
+
 
 	Deterministic_Continuous_Dynamics dynamics(ode_rhs);
 
@@ -51,13 +51,13 @@ int main(int argc, char *argv[])
 	setting.setFixedStepsize(0.005, order);
 
 	// time horizon for a single control step
-	setting.setTime(0.5);
+	setting.setTime(0.1);
 
 	// cutoff threshold
-	setting.setCutoffThreshold(1e-10);
+	setting.setCutoffThreshold(1e-7);
 
 	// queue size for the symbolic remainder
-	setting.setQueueSize(1000);
+	setting.setQueueSize(2000);
 
 	// print out the steps
 	setting.printOff();
@@ -75,9 +75,9 @@ int main(int argc, char *argv[])
 	 * Initial set can be a box which is represented by a vector of intervals.
 	 * The i-th component denotes the initial set of the i-th state variable.
 	 */
-	double w = stod(argv[1]);
+	double w = stod(argv[1]); // 0.5
 	int steps = stoi(argv[2]);
-Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5 - w, 10.5 + w), init_x3(30.025 - 0.05 * w, 30.025 + 0.05 * w), init_x4(0);
+	Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5 - w, 10.5 + w), init_x3(30.025 - 0.05 * w, 30.025 + 0.05 * w), init_x4(0);
 	// Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0); 
 	std::vector<Interval> X0;
@@ -143,16 +143,10 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 		//initial_set.intEval(box, order, setting.tm_setting.cutoff_threshold);
 		TaylorModelVec<Real> tmv_input;
 
-		// tmv_input.tms.push_back(initial_set.tmvPre.tms[0]);
-		// tmv_input.tms.push_back(initial_set.tmvPre.tms[1]);
-
-		TaylorModelVec<Real> tmv_temp;
-		initial_set.compose(tmv_temp, order, cutoff_threshold);
-		tmv_input.tms.push_back(tmv_temp.tms[0]);
-		tmv_input.tms.push_back(tmv_temp.tms[1]);
-		tmv_input.tms.push_back(tmv_temp.tms[2]);
-		tmv_input.tms.push_back(tmv_temp.tms[3]);
-		tmv_input.tms.push_back(tmv_temp.tms[4]);
+		for (int i = 0; i < 5; i++)
+		{
+			tmv_input.tms.push_back(initial_set.tmvPre.tms[i]);
+		}
 
 		// taylor propagation
 		NNTaylor nn_taylor(nn);
@@ -167,7 +161,7 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 			nn_taylor.NN_Reach(tmv_output, tmv_input, ti, initial_set.domain);
 		}
 		// cout << "initial_set.domain: " << initial_set.domain[0] << initial_set.domain[1] << endl;
-		Matrix<Interval> rm1(1, 1);
+		Matrix<Interval> rm1(nn.get_num_of_outputs(), 1);
 		tmv_output.Remainder(rm1);
 		cout << "Neural network taylor remainder: " << rm1 << endl;
 
@@ -197,12 +191,8 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 		// if (rm1[0][0].width() < rem.width())
 		if (true)
 		{
-			tmv_temp.tms[u_id] = tmv_output.tms[0];
-			Flowpipe flow_temp(tmv_temp, initial_set.domain, cutoff_threshold);
-			initial_set = flow_temp;
-
-			// initial_set.tmvPre.tms[u_id] = tmv_output.tms[0];
-
+			initial_set.tmvPre.tms[u0_id] = tmv_output.tms[0];
+			 
 			cout << "TM -- Propagation" << endl;
 		}
 		else
@@ -216,12 +206,10 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 		if (result.status == COMPLETED_SAFE || result.status == COMPLETED_UNSAFE || result.status == COMPLETED_UNKNOWN)
 		{
 			initial_set = result.fp_end_of_time;
-			cout << "Flowpipe taylor remainder: " << initial_set.tmv.tms[0].remainder << "     " << initial_set.tmv.tms[1].remainder << endl;
 		}
 		else
 		{
 			printf("Terminated due to too large overestimation.\n");
-			return 1;
 		}
 	}
 
@@ -230,16 +218,6 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 	reach_result = "Verification result: Unknown(35)";
 	result.fp_end_of_time.intEval(end_box, order, setting.tm_setting.cutoff_threshold);
 
-	if (end_box[0].inf() >= 0.0 && end_box[0].sup() <= 0.2 && end_box[1].inf() >= 0.05 && end_box[1].sup() <= 0.3)
-	{
-		reach_result = "Verification result: Yes(35)";
-	}
-
-	if (end_box[0].inf() >= 0.2 || end_box[0].sup() <= 0.0 || end_box[1].inf() >= 0.3 || end_box[1].sup() <= 0.05)
-	{
-		reach_result = "Verification result: No(35)";
-	}
-
 	time(&end_timer);
 	seconds = difftime(start_timer, end_timer);
 
@@ -247,7 +225,7 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 	result.transformToTaylorModels(setting);
 
 	Plot_Setting plot_setting;
-	plot_setting.setOutputDims(x0_id, x1_id);
+	plot_setting.setOutputDims(x0_id, x3_id);
 
 	int mkres = mkdir("./outputs", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 	if (mkres < 0 && errno != EEXIST)
@@ -267,6 +245,8 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
 	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0_x3" + to_string(if_symbo), result);
+
+ 
 
 	return 0;
 }

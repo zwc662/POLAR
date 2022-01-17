@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
 	 * Initial set can be a box which is represented by a vector of intervals.
 	 * The i-th component denotes the initial set of the i-th state variable.
 	 */
-	double w = 0.5; //stod(argv[1]); // 0.5
-	int steps = 9; //stoi(argv[2]);
+	double w = stod(argv[1]); // 0.5
+	int steps = stoi(argv[2]);
 	Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5 - w, 10.5 + w), init_x3(30.025 - 0.05 * w, 30.025 + 0.05 * w), init_x4(0);
 	// Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0); 

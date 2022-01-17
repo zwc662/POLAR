@@ -197,17 +197,17 @@ Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5
 		// if (rm1[0][0].width() < rem.width())
 		if (true)
 		{
-			tmv_temp.tms[u_id] = tmv_output.tms[0];
+			tmv_temp.tms[u0_id] = tmv_output.tms[0];
 			Flowpipe flow_temp(tmv_temp, initial_set.domain, cutoff_threshold);
 			initial_set = flow_temp;
 
-			// initial_set.tmvPre.tms[u_id] = tmv_output.tms[0];
+			// initial_set.tmvPre.tms[u0_id] = tmv_output.tms[0];
 
 			cout << "TM -- Propagation" << endl;
 		}
 		else
 		{
-			// initial_set.tmvPre.tms[u_id] = tm_output2;
+			// initial_set.tmvPre.tms[u0_id] = tm_output2;
 			// cout << "TM -- Linear, whole" << endl;
 		}
 

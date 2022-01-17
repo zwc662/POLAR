@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 		//initial_set.intEval(box, order, setting.tm_setting.cutoff_threshold);
 		TaylorModelVec<Real> tmv_input;
 
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			tmv_input.tms.push_back(initial_set.tmvPre.tms[i]);
 		}

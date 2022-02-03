@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 
 	// the order in use
 	// unsigned int order = 5;
-	Interval cutoff_threshold(-1e-8, 1e-8);
+	Interval cutoff_threshold(-1e-7, 1e-7);
 	unsigned int bernstein_order = stoi(argv[3]);
 	unsigned int partition_num = 4000;
 
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/acc_tanh20x20x20_x4x5" + to_string(steps) + "_" + to_string(if_symbo) + ".txt");
+	ofstream result_output("./outputs/acc_tanh20x20x20_x4x5_steps_" + to_string(steps) + "_" + to_string(if_symbo) + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0_x4x5"  + to_string(steps) + "_"  + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x4x5_steps_"  + to_string(steps) + "_"  + to_string(if_symbo), result);
 
  
 

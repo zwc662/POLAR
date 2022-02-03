@@ -282,7 +282,7 @@ int main(int argc, char *argv[])
 	result.transformToTaylorModels(setting);
 
 	Plot_Setting plot_setting;
-	plot_setting.setOutputDims(x0_id, x3_id);
+	plot_setting.setOutputDims(x4_id, x5_id);
 
 	int mkres = mkdir("./outputs", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 	if (mkres < 0 && errno != EEXIST)
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/acc_tanh20x20x20__" + to_string(if_symbo) + ".txt");
+	ofstream result_output("./outputs/acc_tanh20x20x20__x4x5" + to_string(if_symbo) + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0__x3" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0__x4x5" + to_string(if_symbo), result);
 
  
 

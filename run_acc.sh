@@ -29,4 +29,4 @@ make acc && \
     # ./benchmark6_sigmoid 0.01 10 4 6 0 && \
     # ./benchmark6_tanh 0.01 10 4 6 0
 	#./acc 0.5 9 4 4 0 && \
-    ./acc 0.5 200 4 4 1
+    ./acc 0.5 120 4 4 1

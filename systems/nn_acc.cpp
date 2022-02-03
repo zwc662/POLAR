@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
 	int x2_id = stateVars.declareVar("x2");	// x_lead
 	int x3_id = stateVars.declareVar("x3");	// x_ego
 	int x4_id = stateVars.declareVar("x4"); // v_lead
-	int x4_id = stateVars.declareVar("x5");	// v_ego
-	int x4_id = stateVars.declareVar("x6");	// gamma_lead
-	int x4_id = stateVars.declareVar("x7");	// gamma_ego
+	int x5_id = stateVars.declareVar("x5");	// v_ego
+	int x6_id = stateVars.declareVar("x6");	// gamma_lead
+	int x7_id = stateVars.declareVar("x7");	// gamma_ego
 	int u0_id = stateVars.declareVar("u0");	// a_ego
 	
 	 

@@ -9,36 +9,87 @@ using namespace flowstar;
 int main(int argc, char *argv[])
 {
 	intervalNumPrecision = 300;
-
+	
+	/*
 	// Declaration of the state variables.
-	unsigned int numVars = 6;
-
+	unsigned int numVars = 7;
+	
 	// intput format (\omega_1, \psi_1, \omega_2, \psi_2, \omega_3, \psi_3)
-	int x0_id = stateVars.declareVar("x0");
-	int x1_id = stateVars.declareVar("x1");
-	int x2_id = stateVars.declareVar("x2");
-	int x3_id = stateVars.declareVar("x3");
-	int x4_id = stateVars.declareVar("x4");
+	int x0_id = stateVars.declareVar("x0"); // x_lead
+	int x1_id = stateVars.declareVar("x1");	// v_lead
+	int x2_id = stateVars.declareVar("x2");	// gamma_lead
+	int x3_id = stateVars.declareVar("x3");	// x_ego
+	int x4_id = stateVars.declareVar("x4");	// v_ego
+	int x5_id = stateVars.declareVar("x5"); // gamma_ego
 	int u0_id = stateVars.declareVar("u0");
 	 
 	int domainDim = numVars + 1;
-
+	 
 	// Define the continuous dynamics.
 	Expression_AST<Real> deriv_x0("x1"); // theta_r = 0
-	Expression_AST<Real> deriv_x1("-4 - 2* x1 - 0.0001 * x0^2 ");
+	Expression_AST<Real> deriv_x1("x2"); 
+	Expression_AST<Real> deriv_x2("-2 * 2 - 2 * x2 - 0.0001 * x1^2 ");
 	Expression_AST<Real> deriv_x2("x3");
 	Expression_AST<Real> deriv_x3("x4");
-	Expression_AST<Real> deriv_x4("2 * u0 - 2* x4 - 0.0001 * x3^2");
+	Expression_AST<Real> deriv_x4("2 * u0 - 2 * x4 - 0.0001 * x3^2");
 	Expression_AST<Real> deriv_u0("0");
 	 
+	// Define the continuous dynamics according to 
+	
+
 	vector<Expression_AST<Real>> ode_rhs(numVars);
 	ode_rhs[x0_id] = deriv_x0;
 	ode_rhs[x1_id] = deriv_x1;
 	ode_rhs[x2_id] = deriv_x2;
 	ode_rhs[x3_id] = deriv_x3;
 	ode_rhs[x4_id] = deriv_x4;
+	ode_rhs[x5_id] = deriv_x5;
 	ode_rhs[u0_id] = deriv_u0;
+	*/
+	
+	// Check 'ARCH-COMP20_Category_Report_Artificial_Intelligence_and_Neural_Network_Control_Systems_-AINNCS-_for_Continuous_and_Hybrid_Systems_Plants.pdf'
+	// Declaration of the state variables.
+	unsigned int numVars = 9;
+	
+	// intput format (\omega_1, \psi_1, \omega_2, \psi_2, \omega_3, \psi_3)
+	int x0_id = stateVars.declareVar("x0"); // v_set
+	int x1_id = stateVars.declareVar("x1");	// T_gap
+	int x2_id = stateVars.declareVar("x2");	// x_lead
+	int x3_id = stateVars.declareVar("x3");	// x_ego
+	int x4_id = stateVars.declareVar("x4"); // v_lead
+	int x4_id = stateVars.declareVar("x5");	// v_ego
+	int x4_id = stateVars.declareVar("x6");	// gamma_lead
+	int x4_id = stateVars.declareVar("x7");	// gamma_ego
+	int u0_id = stateVars.declareVar("u0");	// a_ego
+	
+	 
+	int domainDim = numVars + 1;
+	 
+	// Define the continuous dynamics.
+	Expression_AST<Real> deriv_x0("0"); //  
+	Expression_AST<Real> deriv_x1("0"); 
+	Expression_AST<Real> deriv_x2("x4");
+	Expression_AST<Real> deriv_x3("x5");
+	Expression_AST<Real> deriv_x4("x6");
+	Expression_AST<Real> deriv_x5("x7");
+	Expression_AST<Real> deriv_x6("-2 * 2 - 2 * x6 - 0.0001 * x2^2");
+	Expression_AST<Real> deriv_x7("2 * u0 - 2 * x7 - 0.0001 * x3^2");
+	Expression_AST<Real> deriv_u0("0");
+	 
+	// Define the continuous dynamics according to 
+	
 
+	vector<Expression_AST<Real>> ode_rhs(numVars);
+	ode_rhs[x0_id] = deriv_x0;
+	ode_rhs[x1_id] = deriv_x1;
+	ode_rhs[x2_id] = deriv_x2;
+	ode_rhs[x3_id] = deriv_x3;
+	ode_rhs[x4_id] = deriv_x4;
+	ode_rhs[x5_id] = deriv_x5;
+	ode_rhs[x6_id] = deriv_x6;
+	ode_rhs[x7_id] = deriv_x7;
+	ode_rhs[u0_id] = deriv_u0;
+	
 
 	Deterministic_Continuous_Dynamics dynamics(ode_rhs);
 
@@ -77,7 +128,7 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]); // 0.5
 	int steps = stoi(argv[2]);
-	Interval init_x0(32.025 - 0.05 * w, 32.025 + 0.05 * w), init_x1(0), init_x2(10.5 - w, 10.5 + w), init_x3(30.025 - 0.05 * w, 30.025 + 0.05 * w), init_x4(0);
+	Interval init_x0(30), init_x1(1.4), init_x2(100 - 20 * w, 100 + 20 * w), init_x3(10.5 - w, 10.5 + w), init_x4(32.1 - 0.2 * w, 32.1 + 0.2 * w), init_x5(30.1 - 0.2 * w, 30.1 + 0.2 * w), init_x6(0), init_x7(0);
 	// Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0); 
 	std::vector<Interval> X0;
@@ -86,6 +137,9 @@ int main(int argc, char *argv[])
 	X0.push_back(init_x2);
 	X0.push_back(init_x3);
 	X0.push_back(init_x4);
+	X0.push_back(init_x5);
+	X0.push_back(init_x6);
+	X0.push_back(init_x7);
 	X0.push_back(init_u0);
 
 	// translate the initial set to a flowpipe
@@ -98,7 +152,7 @@ int main(int argc, char *argv[])
 	Result_of_Reachability result;
 
 	// define the neural network controller
-	string nn_name = "systems_with_networks/acc/acc_tanh20x20x20";
+	string nn_name = "systems_with_networks/acc/acc_tanh20x20x20_";
 	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
@@ -125,7 +179,10 @@ int main(int argc, char *argv[])
 	state_vars.push_back("x2");
 	state_vars.push_back("x3");
 	state_vars.push_back("x4");
-
+	state_vars.push_back("x5");
+	state_vars.push_back("x6");
+	state_vars.push_back("x7");
+	
 	if (if_symbo == 0)
 	{
 		cout << "High order abstraction starts." << endl;
@@ -143,7 +200,7 @@ int main(int argc, char *argv[])
 		//initial_set.intEval(box, order, setting.tm_setting.cutoff_threshold);
 		TaylorModelVec<Real> tmv_input;
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			tmv_input.tms.push_back(initial_set.tmvPre.tms[i]);
 		}
@@ -236,7 +293,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/acc_tanh20x20x20_" + to_string(if_symbo) + ".txt");
+	ofstream result_output("./outputs/acc_tanh20x20x20__" + to_string(if_symbo) + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -244,7 +301,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0_x3" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("acc_tanh20x20x20_x0__x3" + to_string(if_symbo), result);
 
  
 
